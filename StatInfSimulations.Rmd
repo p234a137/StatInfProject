@@ -1,0 +1,10 @@
+---
+title: "Statistical Inference, Simulations"
+author: ""
+date: "10/23/2015"
+output: pdf_document
+---
+
+# Simulation Exercise
+
+# Basic Inferential Data Analysis
