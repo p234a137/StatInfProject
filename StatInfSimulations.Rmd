@@ -12,7 +12,7 @@ This study ivestigates the exponential distribution in R and compares it with th
 
 # Simulations
 
-Simulate 40 exponentials, $f(x) = \lambda * \exp(-\lambda*x)$, with rate parameter $\lambda = 0.2$ and take the mean of them. Do this 1000 times. Keep each of the 1000 means in the vector $expmean$.
+We simulate 40 exponentials, $f(x) = \lambda * \exp(-\lambda*x)$, with rate parameter $\lambda = 0.2$ and then take the mean of each. This is done 1000 times. Each of the 1000 means is kept in the vector $expmean$.
 
 ```{r simulation1}
 library(ggplot2)
@@ -20,14 +20,14 @@ nosim <- 1000 # number of simulations
 lambda <- 0.2 # the rate parameter
 nevts <- 40 # number of exponentials
 # perform simulation
-# set.seed(973422) # setting the seed would make this study reproducible
+#set.seed(973402) # setting the seed makes this simple study reproducible
 expmean = NULL; for (i in 1 : nosim) expmean = c(expmean, mean(rexp(nevts,lambda)))
 ```
 
 
 # Sample Mean versus Theoretical Mean
 
-The theoretical mean for the exponential distribution is $1 / \lambda = 1 / 0.2 = 5$. In the figure below the cumulative sample mean is plotted as the number of simulations increases from 1 to `r nosim`. As it can be seen, the sample mean converges closer to the theoretical mean as the number of simulations increases. The theoretical value is plotted as a horizontal line. This is in accordance with what we expect from LLN.
+The theoretical mean for the exponential distribution is $1 / \lambda = 1 / 0.2 = 5$. In the figure below the cumulative sample mean is plotted as the number of simulations increases from 1 to `r nosim`. As it can be seen, the sample mean fluctuates and then converges closer and closer to the theoretical mean as the number of simulations increases. This is in accordance with what we expect from LLN. The theoretical value is plotted as a horizontal line.
 
 ```{r mean, fig.width=9, fig.height = 4}
 sample_mean <- mean(expmean)
@@ -47,7 +47,7 @@ The sample mean for `r nosim` simulations is `r sample_mean`, which is close to 
 
 The theoretical standard deviation for one exponential distribution is $1 / \lambda = 1 / 0.2 = 5$. 
 For a sample of exponential distributions, we need to take the variance on the mean, which is the squared of the standard deviation, divided by the sample size $5*5/40 = 0.625$.
-In the figure below the cumulative sample variance is plotted as the number of simulations increases from 1 to `r nosim`. As it can be seen, the sample variance converges closer to the theoretical mean as the number of simulations increases. The theoretical value is plotted as a horizontal line. Again, this is in accordance with what we expect from LLN.
+In the figure below the cumulative sample variance is plotted as the number of simulations increases from 1 to `r nosim`. Similar to the case of the sample mean, the sample variance converges closer to the theoretical mean as the number of simulations increases. Again, this is in accordance with what we expect from LLN. The theoretical value of the variance is plotted as a horizontal line.
 
 
 ```{r variance, fig.width=9, fig.height = 4}
@@ -66,7 +66,7 @@ The sample variance for `r nosim` simulations is `r sample_variance`, which is c
 
 # Distribution
 
-In the figure below the distributions of the means for each simulation is plotted as a histogram. A normal distribution is overlayed as a red line with the theoretical mean and standard deviation (as square root of the variance) with the values described above. As we can clearly see, the simulated distribution is very close to a normal distribution, which is what we expect from the CLT. This distribution is much more different than the exponential falling distribution we would observe if we picked single exponentials instead of 40.
+In the figure below the distributions of the means for each simulation is plotted as a histogram. A normal distribution with the theoretical mean and standard deviation (as square root of the variance) is overlayed as a red line. As we can see, the simulated distribution is very close to a normal distribution, which is what we expect from the CLT. This distribution is very different from the exponential falling distribution we would observe if we picked single exponentials instead of 40.
 ```{r distribution, fig.width=9, fig.height = 4}
 g <- ggplot(data.frame(x = 1 : nosim, y = expmean), aes(x = expmean)) +
   geom_histogram(alpha = .20, binwidth=.2, colour = "black", aes(y = ..density..)) 
