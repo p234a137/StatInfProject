@@ -1,5 +1,5 @@
 ---
-title: "Statistical Inference, Simulations"
+title: "Study of the Exponential Distribution and  CLT using Simulations"
 author: "Dorian Kcira"
 date: "10/23/2015"
 output: pdf_document
