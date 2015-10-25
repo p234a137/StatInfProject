@@ -23,38 +23,76 @@ with(data=ToothGrowth,
        main="Tooth length vs dose for two delivery methods", 
        ylab="Tooth length", xlab="dose")
 )
-
-histogram(ToothGrowth$len, main="Distribution of tooth length")
-
-#histogram(~fastest|sex,data=m111survey,
-#       type="density",
-#       xlab="speed (mph)",
-#       main="Fastest Speed Ever Driven,\nby Sex",
-#       breaks=seq(from=60,to=190,by=10))
-#with(data=ToothGrowth,
-#     xyplot(len~dose|supp, 
-#       main="Tooth length vs dose for two delivery methods", 
-#       ylab="Tooth length", xlab="dose")
-#)
 ```
 
 We can see that there are large variations of the tooth length for each dose, but there is a clear tendency of teeth being longer for larger doses of vitamin C. Also, visually, the orange juice (OJ) method seems to do better than the absorbic acid (VC) method. We need to confirm this analytically.
 
+
+```{r dataset_exploratory2, fig.width=9, fig.height = 4}
+histogram(ToothGrowth$len, main="Distribution of tooth length")
+
+```
+
+We also look at the histogram of the tooth length distribution to see if it has any particular shape.
+
 # Hypotheses
 
-The problem formulation does not clarify whether the measurements were paired, therefore we will use the relaxed assumption that they are independent
-Our first hypothesis will be that the tooth length increases with the dose. 
+The problem formulation does not clarify whether the measurements were paired, therefore we will use the relaxed assumption that they are independent. From the panel plots above, the variance looks different among the different subsets. We will, therefore assume different variances for the t-tests below.
+
+The other assumption will be that the tooth length data are normally distributed. 
+
+ Our first hypothesis will be that the tooth length increases with the dose.  Our second hypothesis will be that the tooth length depends on the delivery method.
 
 
-# Varia
 
-Now in the second portion of the class, we're going to analyze the ToothGrowth data in the R datasets package. 
-Load the ToothGrowth data and perform some basic exploratory data analyses 
-Provide a basic summary of the data.
-Use confidence intervals and/or hypothesis tests to compare tooth growth by supp and dose. (Only use the techniques from class, even if there's other approaches worth considering)
-State your conclusions and the assumptions needed for your conclusions. 
-Some criteria that you will be evaluated on
-Did you  perform an exploratory data analysis of at least a single plot or table highlighting basic features of the data?
-Did the student perform some relevant confidence intervals and/or tests?
-Were the results of the tests and/or intervals interpreted in the context of the problem correctly? 
-Did the student describe the assumptions needed for their conclusions?
+# Testing the Hypotheses
+
+## Tooth length depends on the vitamin C dose
+
+The null hypothesis will be that the tooth length does not depend on the dose. Using the length data for each dose we build three t-tests for every combination and print out the 95% confidence intervals. 
+
+```{r hyp1}
+length05 = ToothGrowth$len[ToothGrowth$dose==0.5]
+length1  = ToothGrowth$len[ToothGrowth$dose==1]
+length2  = ToothGrowth$len[ToothGrowth$dose==2]
+test1 <- t.test(length2 , length05 , paired = FALSE , var.equal = FALSE , conf.level = 0.95)
+cat("The test1 95% confidence interval is:",test1$conf.int,"\n")
+test2 <- t.test(length2 , length1 , paired = FALSE , var.equal = FALSE , conf.level = 0.95)
+cat("The test2 95% confidence interval is:",test2$conf.int,"\n")
+test3 <- t.test(length1 , length05 , paired = FALSE , var.equal = FALSE , conf.level = 0.95)
+cat("The test3 95% confidence interval is:",test3$conf.int,"\n")
+```
+
+In each case the confidence interval does not include the null hypothesis, i.e. we can conclude that tooth length depends on the vitamin C dose and increases with it.
+
+
+## Tooth length depends on the vitamin C delivery method
+
+The null hypothesis here is that the tooth length does not depend on the delivery method.
+
+```{r hyp2}
+lengthOJ = ToothGrowth$len[ToothGrowth$supp=="OJ"]
+lengthVC = ToothGrowth$len[ToothGrowth$supp=="VC"]
+testsupp = t.test(lengthOJ , lengthVC , paired = FALSE , var.equal = FALSE , conf.level = 0.95)
+cat("The delivery method 95% confidence interval is:",testsupp$conf.int,"\n")
+```
+
+The confidence level here includes 0, hence we are not able to exclude the null hypothesis. So we are not able to prove that the tooth length depends on the delivery method. For the sake of completeness, let's re-test this last hypothesis with the assumption that the data are paired.
+```{r hyp22}
+testsupp2 = t.test(lengthOJ , lengthVC , paired = TRUE , var.equal = FALSE , conf.level = 0.95)
+cat("The delivery method for paired data 95% confidence interval is:",testsupp2$conf.int,"\n")
+```
+If the data were paired, which we do not know for sure, we would be able to conclude that the tooth length also depends on the delivery method and it is higher for Orange Juice.
+
+
+# Conclusions
+
+After doing a short exploratory analysis of the data we looked at the data with these assumptions:
+
+   1. the data (tooth length) are normally distributed
+   2. the measurements are independent for the different dose and delivery methods
+   3. the variance among the different doses and delivery methods are different
+
+Our first hypothesis was that the tooth length increases with the dose. Using the t-test we demonstrated that this hypothesis is true and that the larger the dose, the larger the tooth length
+  
+Our second hypothesis was that the tooth length depends on the delivery method. Using the assumptions above we were not able to prove this hypothesis. If one changes the assumptions, assuming that the data are paired, this hypothesis is confirmed and the Orange Juice method has a larger impact on tooth length than ascorbic acid.
